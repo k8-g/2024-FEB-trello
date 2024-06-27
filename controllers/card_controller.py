@@ -5,8 +5,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from init import db
 from models.card import Card, card_schema, cards_schema
+from controllers.comment_controller import comments_bp
 
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
+cards_bp.register_blueprint(comments_bp)
 
 # /cards - GET - fetch all cards
 # /cards/<id> - GET - fetch a single card
@@ -84,7 +86,7 @@ def update_card(card_id):
     # get the card from the database
     stmt = db.select(Card).filter_by(id=card_id)
     card = db.session.scalar(stmt)
-    # if card
+    # if card exists
     if card:
         # update the fields as required
         card.title = body_data.get("title") or card.title
